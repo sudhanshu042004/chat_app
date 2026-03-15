@@ -1,4 +1,6 @@
 "use client"
+
+export const dynamic = 'force-dynamic';
 import { UserContext } from '@/app/Provider'
 import Particles from '@/components/Particles/Particles'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'

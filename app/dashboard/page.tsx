@@ -1,4 +1,6 @@
 "use client";
+
+export const dynamic = 'force-dynamic';
 import { ChatRoom, Message, User } from '@/lib/types';
 import React, { useContext, useEffect, useState } from 'react';
 import { signOut, useSession } from "next-auth/react";
