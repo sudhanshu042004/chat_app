@@ -17,7 +17,7 @@ let userCount = 0;
 const rooms: { [roomId: string]: Set<WebSocket> } = {};
 
 
-wss.on('connection', function connection(ws) {
+wss.on('connection', function connection(ws: WebSocket) {
   // Error handling
   ws.on('error', console.error);
 
@@ -62,7 +62,7 @@ wss.on('connection', function connection(ws) {
       ws.send(JSON.stringify({ message: `You joined room: ${currentRoom}` }));;
       const roomClients = rooms[currentRoom as string];
       if (roomClients) {
-        roomClients.forEach((client: any) => {
+        roomClients.forEach((client: WebSocket) => {
           if (client !== ws && client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify({
               roomId: currentRoom,

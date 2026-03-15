@@ -7,7 +7,12 @@ if (!secret) {
   throw new Error("NEXTAUTH_SECRET is not set in the environment variables");
 }
 export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: secret as string, raw: true });
+  const token = await getToken({
+    req,
+    secret: secret as string,
+    raw: true,
+    salt: "authjs"
+  } as any);
 
   if (!token) {
     console.log("No token found, redirecting to login");

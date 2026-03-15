@@ -1,4 +1,8 @@
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer, WebSocket as WSWebSocket } from "ws";
+
+interface WebSocket extends WSWebSocket {
+  userId?: number;
+}
 
 export class websocketClasses {
   private static wss: WebSocketServer;
@@ -8,20 +12,20 @@ export class websocketClasses {
   private static userConnections: Map<number, WebSocket> = new Map();
 
   constructor(port: number) {
-    const server = new WebSocket.Server({ port: port })
+    const server = new WebSocketServer({ port: port })
     websocketClasses.wss = server
     console.log(`server running at ${port}`)
   }
 
   start() {
-    websocketClasses.wss.on("connection", (ws) => {
+    websocketClasses.wss.on("connection", (ws: WebSocket) => {
       console.log('Ping')
       ws.send("pong")
       return this.handleConnection(ws)
     })
   }
 
-  handleConnection(ws: any) {
+  handleConnection(ws: WebSocket) {
     ws.on("message", (data: string) => {
       const msg = JSON.parse(data);
       switch (msg.type) {
@@ -49,7 +53,7 @@ export class websocketClasses {
   }
 
   //to connect 
-  private connectServer(ws: any, userId: number) {
+  private connectServer(ws: WebSocket, userId: number) {
     const existingConnection = websocketClasses.userConnections.get(userId);
     if (existingConnection) {
       existingConnection.close();
@@ -85,7 +89,7 @@ export class websocketClasses {
   }
 
   //on join room
-  private joinRoom(roomId: string, ws: any) {
+  private joinRoom(roomId: string, ws: WebSocket) {
     if (websocketClasses.userRooms.has(ws)) {
       const prevRoom = websocketClasses.userRooms.get(ws);
       if (prevRoom) {
@@ -110,7 +114,7 @@ export class websocketClasses {
   }
 
   //disconnect
-  private disconnect(ws: any) {
+  private disconnect(ws: WebSocket) {
     const userId = ws.userId;
 
     if (!userId) {
@@ -164,7 +168,7 @@ export class websocketClasses {
   }
 
   private broadcastUsers() {
-    websocketClasses.wss.clients.forEach((client) => {
+    websocketClasses.wss.clients.forEach((client: WebSocket) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(
           JSON.stringify({
