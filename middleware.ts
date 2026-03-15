@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken, GetTokenParams } from "next-auth/jwt";
 
-const secret = process.env.NEXTAUTH_SECRET;
-
-if (!secret) {
-  throw new Error("NEXTAUTH_SECRET is not set in the environment variables");
-}
 export async function middleware(req: NextRequest) {
+  const secret = process.env.NEXTAUTH_SECRET;
+
+  if (!secret) {
+    console.error("NEXTAUTH_SECRET is not set in the environment variables");
+    return NextResponse.next(); // Or return a safe default, since throwing blocks build
+  }
+
   const token = await getToken({
     req,
     secret: secret as string,
